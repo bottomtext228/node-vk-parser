@@ -1,0 +1,11 @@
+
+export { APILimits };
+
+const APILimits = {
+    USERS_GET: 1000,
+    GROUPS_GET_BY_ID: 500,
+    FRIENDS_GET: 5000,
+    PHOTOS_GET_ALL: 200,
+    GROUPS_GET: 1000,
+    SUBSCRIBERS_GET: 1000
+}
