@@ -4,12 +4,12 @@ import { splitArray } from "../utils/utils.js";
 import { writeFileSync } from 'fs';
 import { APILimits } from "../vkapi/limits.js";
 
-export async function parseFriends(user, saveFolder) {
-
+export async function parseFriends(userId, saveFolder) {
     let fileContent = '';
+
     const downloadFriendsFromResponse = async (response) => {
-    
-        const chunks = splitArray(response.items, APILimits.USERS_GET);
+        const friendsList = response.items;
+        const chunks = splitArray(friendsList, APILimits.USERS_GET);
 
         for (const chunk of chunks) {
             const friends = await vk.api.users.get({ user_ids: chunk });
@@ -18,7 +18,7 @@ export async function parseFriends(user, saveFolder) {
             }
         }
     }
-    await parse(vk.api.friends.get, downloadFriendsFromResponse, { user_id: user.id, count: APILimits.FRIENDS_GET });
 
-    writeFileSync(saveFolder + '/friends.txt', fileContent);
+    await parse(vk.api.friends.get, downloadFriendsFromResponse, { user_id: userId, count: APILimits.FRIENDS_GET });
+    writeFileSync(saveFolder + '/friends.txt', fileContent); 
 }
