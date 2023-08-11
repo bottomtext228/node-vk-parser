@@ -6,7 +6,7 @@ import { createWriteStream } from "fs";
 /**
  * @param {String} url URL of the image to download.
  * @param {String} fullPath Full path of the downloaded file. 
- * @returns {Promise} Promise resolved when the file is downloaded and rejected on error.
+ * @returns {Promise<String>} Promise resolved when the file is downloaded and rejected on error.
  */
 export function downloadImageToUrl(url, filepath) {
     let client = http;
@@ -15,10 +15,11 @@ export function downloadImageToUrl(url, filepath) {
     }
     return new Promise((resolve, reject) => {
         const request = client.get(url, (res) => { 
+            
             if (res.statusCode === 200) {
                 res.pipe(createWriteStream(filepath))
                     .on('error', reject)
-                    .once('close', resolve);
+                    .once('close', () => resolve(filepath));
             } else {
                 // Consume response data to free up memory
                 res.resume();
@@ -26,7 +27,10 @@ export function downloadImageToUrl(url, filepath) {
 
             }
         });
-        request.setTimeout(60e3, () => reject(new Error('Timeout')));
+        request.setTimeout(60e3, () => reject(new Error('TIMEOUT')));
+        request.on('error', (error) => {
+            reject(new Error(error.code));
+        });
     });
 }
 

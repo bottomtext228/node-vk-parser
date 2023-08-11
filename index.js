@@ -1,12 +1,16 @@
 import 'dotenv/config';
-import { mkdirSync } from 'fs';
+import { mkdirSync} from 'fs';
 import { parseGroups } from './parser/groups.js';
 import { parseFriends } from './parser/friends.js';
 import { parsePhotos } from './parser/photos.js';
 import { getUser, printError, isProfileCanBeParsed, printAndOverwrite } from './utils/utils.js';
 
-
 async function run(profileUrl) {
+    
+    if (!profileUrl) {
+        printError('No arguments passed! Usage: "node index.js <user> <savepath>"');
+        return;
+    }
 
     let user;
     try { // here goes the first API request, so we can check the VK API token 
@@ -15,7 +19,7 @@ async function run(profileUrl) {
         if (error.code == 5 || error.code == 1116) {
             printError('Invalid VK API token! You can get token here: https://vkhost.github.io');
         }
-        return false;
+        return;
     }
 
     if (!user) {
